@@ -14,8 +14,9 @@ public class StateMachine : MonoBehaviour
         confirm,
         enemy,
         drops,
-        end,
-        fail
+        endStatus,
+        fail,
+        execution
     };
 
 }

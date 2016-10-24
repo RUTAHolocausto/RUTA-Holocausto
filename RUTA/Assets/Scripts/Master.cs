@@ -5,12 +5,16 @@ using UnityEngine.UI;
 public class Master : MonoBehaviour {
     public GameObject mainMenuC, attackMenuC, defenseMenuC, runMenuC,
         targetMenuC, confirmMenuC, dropMenuC, endMenuC, failMenuC,
-        cam, enemy1, enemy2, enemy3, enemySelect;
+        cam, side1, side2, player;
     static public int enemyNum;
-    Vector3 enemyTarget;
+    bool camc;
+    Vector3 camPosOrig;
+    Quaternion camRotOrig;
 	// Use this for initialization
 	void Start () {
         StateMachine.battleState = (int)StateMachine.battleStates.mainMenu;
+        camPosOrig = cam.transform.position;
+        camRotOrig = cam.transform.rotation;
 	}
 	
 	// Update is called once per frame
@@ -24,22 +28,22 @@ public class Master : MonoBehaviour {
                 case "Attack phase":
                     {
                         ButtonsPress.state = "0";
-                        StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
                         mainMenuC.SetActive(false);
+                        StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
                         break;
                     }
                 case "Fase de Defensa":
                     {
                         ButtonsPress.state = "0";
-                        StateMachine.battleState = (int)StateMachine.battleStates.defenseMenu;
                         mainMenuC.SetActive(false);
+                        StateMachine.battleState = (int)StateMachine.battleStates.defenseMenu;
                         break;
                     }
                 case "Run phase":
                     {
                         ButtonsPress.state = "0";
-                        StateMachine.battleState = (int)StateMachine.battleStates.run;
                         mainMenuC.SetActive(false);
+                        StateMachine.battleState = (int)StateMachine.battleStates.run;
                         break;
                     }
             }
@@ -47,11 +51,15 @@ public class Master : MonoBehaviour {
         else if (StateMachine.battleState == (int)StateMachine.battleStates.attackMenu)
         {
             attackMenuC.SetActive(true);
+            camc = false;
+            cam.transform.position = camPosOrig;
+            cam.transform.rotation = camRotOrig;
             if(ButtonsPress.state == "Targetting")
             {
                 ButtonsPress.state = "0";
-                StateMachine.battleState = (int)StateMachine.battleStates.target;
+                player.GetComponent<Player>().ap -= ButtonsPress.attackAp;
                 attackMenuC.SetActive(false);
+                StateMachine.battleState = (int)StateMachine.battleStates.target;
             }
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.defenseMenu)
@@ -64,27 +72,89 @@ public class Master : MonoBehaviour {
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.target)
         {
-             
+            targetMenuC.SetActive(true);
+            if(camc == false)
+            {
+                cam.transform.position = side1.transform.position;
+                cam.transform.rotation = side1.transform.rotation;
+                camc = true;
+            }
+
+            if (ButtonsPress.state == "Change Side")
+            {
+                ButtonsPress.state = "0";
+                if (cam.transform.position == side1.transform.position)
+                {
+                    ButtonsPress.state = "0";
+                    cam.transform.position = side2.transform.position;
+                    cam.transform.rotation = side2.transform.rotation;
+                }
+                else if (cam.transform.position == side2.transform.position)
+                {
+                    ButtonsPress.state = "0";
+                    cam.transform.position = side1.transform.position;
+                    cam.transform.rotation = side1.transform.rotation;
+                }
+            }
+            if(ButtonsPress.state == "Selected")
+            {
+                ButtonsPress.state = "0";
+                targetMenuC.SetActive(false);
+                StateMachine.battleState = (int)StateMachine.battleStates.confirm;
+            }
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.confirm)
         {
-
+            confirmMenuC.SetActive(true);
+            if (ButtonsPress.state == "Confirmed")
+            {
+                ButtonsPress.state = "0";
+                if (player.GetComponent<Player>().ap >= 0)
+                {
+                    confirmMenuC.SetActive(false);
+                    StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
+                }
+                else
+                {
+                    confirmMenuC.SetActive(false);
+                    StateMachine.battleState = (int)StateMachine.battleStates.execution;
+                }
+            }
+            else if(ButtonsPress.state =="Go back")
+            {
+                ButtonsPress.state = "0";
+                player.GetComponent<Player>().ap += ButtonsPress.attackAp;
+                confirmMenuC.SetActive(false);
+                StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
+            }
+        }
+        else if (StateMachine.battleState == (int)StateMachine.battleStates.execution)
+        {
+            //ejecutar ataques
+            //comprobar si el enemigo tiene vida
+            StateMachine.battleState = (int)StateMachine.battleStates.enemy;
+            //else
+            StateMachine.battleState = (int)StateMachine.battleStates.endStatus;
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.enemy)
         {
-
+            //enemigo IA y ejecuta ataques
+            if (player.GetComponent<Player>().hp <= 0)
+                StateMachine.battleState = (int)StateMachine.battleStates.mainMenu;
+            else
+                StateMachine.battleState = (int)StateMachine.battleStates.fail;
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.drops)
         {
-
+            //regresar a menu principal y seleccionar objetos
         }
-        else if (StateMachine.battleState == (int)StateMachine.battleStates.end)
+        else if (StateMachine.battleState == (int)StateMachine.battleStates.endStatus)
         {
-
+            StateMachine.battleState = (int)StateMachine.battleStates.drops;
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.fail)
         {
-
+            //regresar a menu principal
         }
     }
 
