@@ -2,20 +2,22 @@
 using System.Collections;
 
 public class ButtonsPress : MonoBehaviour {
-    public static bool att = false, def = false, run = false;
+    public static string state;
     public void attButt()
     {
-        Debug.Log("me tocaron!");
-        att = true;
+        state = "Attack phase";
     }
     public void defButt()
     {
-        Debug.Log("Me tocaste!");
-        def = true;
+        state = "Defense phase";
     }
     public void runButt()
     {
-        Debug.Log("Joto");
-        run = true;
+        state = "Run phase";
+    }
+
+    public void attack(int x)
+    {
+        state = "Targetting";
     }
 }

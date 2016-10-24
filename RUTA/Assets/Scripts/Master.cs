@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Master : MonoBehaviour {
-    public GameObject mainMenuC, attackMenuC, defenseMenuC, runMenuC, targetMenuC, confirmMenuC, dropMenuC, endMenuC, failMenuC;
-
+    public GameObject mainMenuC, attackMenuC, defenseMenuC, runMenuC,
+        targetMenuC, confirmMenuC, dropMenuC, endMenuC, failMenuC,
+        cam, enemy1, enemy2, enemy3, enemySelect;
+    static public int enemyNum;
+    Vector3 enemyTarget;
 	// Use this for initialization
 	void Start () {
         StateMachine.battleState = (int)StateMachine.battleStates.mainMenu;
@@ -15,43 +19,52 @@ public class Master : MonoBehaviour {
         {
             Debug.Log("Main Menu");
             mainMenuC.SetActive(true);
-            if (ButtonsPress.att == true)
+            switch (ButtonsPress.state)
             {
-                ButtonsPress.att = false;
-                StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
-            }
-            else if (ButtonsPress.def == true)
-            {
-                ButtonsPress.def = false;
-                StateMachine.battleState = (int)StateMachine.battleStates.defenseMenu;
-            }
-            else if (ButtonsPress.run == true)
-            {
-                ButtonsPress.run = false;
-                StateMachine.battleState = (int)StateMachine.battleStates.run;
+                case "Attack phase":
+                    {
+                        ButtonsPress.state = "0";
+                        StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
+                        mainMenuC.SetActive(false);
+                        break;
+                    }
+                case "Fase de Defensa":
+                    {
+                        ButtonsPress.state = "0";
+                        StateMachine.battleState = (int)StateMachine.battleStates.defenseMenu;
+                        mainMenuC.SetActive(false);
+                        break;
+                    }
+                case "Run phase":
+                    {
+                        ButtonsPress.state = "0";
+                        StateMachine.battleState = (int)StateMachine.battleStates.run;
+                        mainMenuC.SetActive(false);
+                        break;
+                    }
             }
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.attackMenu)
         {
-            Debug.Log("ataquini");
-            mainMenuC.SetActive(false);
             attackMenuC.SetActive(true);
+            if(ButtonsPress.state == "Targetting")
+            {
+                ButtonsPress.state = "0";
+                StateMachine.battleState = (int)StateMachine.battleStates.target;
+                attackMenuC.SetActive(false);
+            }
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.defenseMenu)
         {
-            Debug.Log("defensini");
-            mainMenuC.SetActive(false);
             defenseMenuC.SetActive(true);
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.run)
         {
-            Debug.Log("jotini");
-            mainMenuC.SetActive(false);
             runMenuC.SetActive(true);
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.target)
         {
-
+             
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.confirm)
         {
