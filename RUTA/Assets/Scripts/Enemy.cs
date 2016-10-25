@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour {
-
+public class Enemy : MonoBehaviour {
     static public int hp;
     static public int ap;
     static public int attack;
@@ -15,20 +14,18 @@ public class Player : MonoBehaviour {
     public int defenseBase;
     public int weightBase;
     public int rpBase;
-    public GameObject part1, part2, part3, part4, part5;
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Awake () {
         hp = hpBase;
         ap = apBase;
         attack = attackBase;
         defense = defenseBase;
         weight = weightBase;
         rp = rpBase;
-        
     }
 	
 	// Update is called once per frame
 	void Update () {
-
+	
 	}
 }

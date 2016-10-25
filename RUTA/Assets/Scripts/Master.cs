@@ -11,7 +11,7 @@ public class Master : MonoBehaviour {
     static public int iterador = 0;
     static public int[] queue;
     bool camc;
-    
+    public GameObject[] target;
     Vector3 camPosOrig;
     Quaternion camRotOrig;
     // Use this for initialization
@@ -20,20 +20,23 @@ public class Master : MonoBehaviour {
         camPosOrig = cam.transform.position;
         camRotOrig = cam.transform.rotation;
         queue = new int[player.GetComponent<Player>().apBase];
-        attackButt1.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte1.GetComponent<attacks>().attackName;
-        //attackButt1.GetComponent<Button>().onClick.
-        //attackButt2.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte2.GetComponent<attacks>().attackName;
-        //attackButt3.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte3.GetComponent<attacks>().attackName;
-        //attackButt4.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte4.GetComponent<attacks>().attackName;
-        //attackButt5.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte5.GetComponent<attacks>().attackName;
+        target = new GameObject[player.GetComponent<Player>().apBase];
+        attackButt1.GetComponentInChildren<Text>().text = player.GetComponent<Player>().part1.GetComponent<Attacks>().attackName;
+        attackButt2.GetComponentInChildren<Text>().text = player.GetComponent<Player>().part2.GetComponent<Attacks>().attackName;
+        attackButt3.GetComponentInChildren<Text>().text = player.GetComponent<Player>().part3.GetComponent<Attacks>().attackName;
+        attackButt4.GetComponentInChildren<Text>().text = player.GetComponent<Player>().part4.GetComponent<Attacks>().attackName;
+        attackButt5.GetComponentInChildren<Text>().text = player.GetComponent<Player>().part5.GetComponent<Attacks>().attackName;
     }
 
     // Update is called once per frame
     void Update () {
         if (StateMachine.battleState == (int)StateMachine.battleStates.mainMenu)
         {
-            Debug.Log("Main Menu");
             mainMenuC.SetActive(true);
+            for(int i = 0; i < player.GetComponent<Player>().apBase; i++)
+            {
+                queue[i] = 0;
+            }
             switch (ButtonsPress.state)
             {
                 case "Attack phase":
@@ -66,11 +69,30 @@ public class Master : MonoBehaviour {
             cam.transform.position = camPosOrig;
             cam.transform.rotation = camRotOrig;
             
-            
-            if(ButtonsPress.state == "Targetting")
+            if(!player.GetComponent<Player>().part1.activeInHierarchy)
+            {
+                attackButt1.SetActive(false);
+            }
+            if (!player.GetComponent<Player>().part2.activeInHierarchy)
+            {
+                attackButt2.SetActive(false);
+            }
+            if (!player.GetComponent<Player>().part3.activeInHierarchy)
+            {
+                attackButt3.SetActive(false);
+            }
+            if (!player.GetComponent<Player>().part4.activeInHierarchy)
+            {
+                attackButt4.SetActive(false);
+            }
+            if (!player.GetComponent<Player>().part5.activeInHierarchy)
+            {
+                attackButt5.SetActive(false);
+            }
+            if (ButtonsPress.state == "Targetting")
             {
                 ButtonsPress.state = "0";
-                player.GetComponent<Player>().ap -= ButtonsPress.attackAp;
+                Player.ap -= ButtonsPress.attackAp;
                 attackMenuC.SetActive(false);
                 StateMachine.battleState = (int)StateMachine.battleStates.target;
             }
@@ -121,8 +143,9 @@ public class Master : MonoBehaviour {
             confirmMenuC.SetActive(true);
             if (ButtonsPress.state == "Confirmed")
             {
+                iterador++;
                 ButtonsPress.state = "0";
-                if (player.GetComponent<Player>().ap >= 0)
+                if (Player.ap >= 0)
                 {
                     confirmMenuC.SetActive(false);
                     StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
@@ -136,7 +159,7 @@ public class Master : MonoBehaviour {
             else if(ButtonsPress.state =="Go back")
             {
                 ButtonsPress.state = "0";
-                player.GetComponent<Player>().ap += ButtonsPress.attackAp;
+                Player.ap += ButtonsPress.attackAp;
                 confirmMenuC.SetActive(false);
                 StateMachine.battleState = (int)StateMachine.battleStates.attackMenu;
             }
@@ -145,6 +168,8 @@ public class Master : MonoBehaviour {
         {
             //ejecutar ataques
             //comprobar si el enemigo tiene vida
+
+            attacks();
             StateMachine.battleState = (int)StateMachine.battleStates.enemy;
             //else
             StateMachine.battleState = (int)StateMachine.battleStates.endStatus;
@@ -153,7 +178,7 @@ public class Master : MonoBehaviour {
         else if (StateMachine.battleState == (int)StateMachine.battleStates.enemy)
         {
             //enemigo IA y ejecuta ataques
-            if (player.GetComponent<Player>().hp <= 0)
+            if (Player.hp <= 0)
                 StateMachine.battleState = (int)StateMachine.battleStates.mainMenu;
             else
                 StateMachine.battleState = (int)StateMachine.battleStates.fail;
@@ -172,4 +197,30 @@ public class Master : MonoBehaviour {
         }
     }
 
+
+    void attacks()
+    {
+        foreach (int i in queue)
+        {
+            switch (i)
+            {
+                //Checar si la animacion termino y regresar el integer a 0
+                case 1:
+                    player.GetComponent<Animator>().SetInteger("State", player.GetComponent<Player>().part1.GetComponent<Attacks>().attackAnim);
+                    break;
+                case 2:
+                    player.GetComponent<Animator>().SetInteger("State", player.GetComponent<Player>().part2.GetComponent<Attacks>().attackAnim);
+                    break;
+                case 3:
+                    player.GetComponent<Animator>().SetInteger("State", player.GetComponent<Player>().part3.GetComponent<Attacks>().attackAnim);
+                    break;
+                case 4:
+                    player.GetComponent<Animator>().SetInteger("State", player.GetComponent<Player>().part4.GetComponent<Attacks>().attackAnim);
+                    break;
+                case 5:
+                    player.GetComponent<Animator>().SetInteger("State", player.GetComponent<Player>().part5.GetComponent<Attacks>().attackAnim);
+                    break;
+            }
+        }
+    }
 }
