@@ -2,23 +2,34 @@
 using System.Collections;
 using UnityEngine.UI;
 
+using UnityEngine.Events;
 public class Master : MonoBehaviour {
     public GameObject mainMenuC, attackMenuC, defenseMenuC, runMenuC,
         targetMenuC, confirmMenuC, dropMenuC, endMenuC, failMenuC,
-        cam, side1, side2, player;
-    static public int enemyNum;
+        cam, side1, side2, player, attackButt1, attackButt2,
+        attackButt3, attackButt4, attackButt5;
+    static public int iterador = 0;
+    static public int[] queue;
     bool camc;
+    
     Vector3 camPosOrig;
     Quaternion camRotOrig;
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         StateMachine.battleState = (int)StateMachine.battleStates.mainMenu;
         camPosOrig = cam.transform.position;
         camRotOrig = cam.transform.rotation;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        queue = new int[player.GetComponent<Player>().apBase];
+        attackButt1.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte1.GetComponent<attacks>().attackName;
+        //attackButt1.GetComponent<Button>().onClick.
+        //attackButt2.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte2.GetComponent<attacks>().attackName;
+        //attackButt3.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte3.GetComponent<attacks>().attackName;
+        //attackButt4.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte4.GetComponent<attacks>().attackName;
+        //attackButt5.GetComponentInChildren<GUIText>().text = player.GetComponent<Player>().parte5.GetComponent<attacks>().attackName;
+    }
+
+    // Update is called once per frame
+    void Update () {
         if (StateMachine.battleState == (int)StateMachine.battleStates.mainMenu)
         {
             Debug.Log("Main Menu");
@@ -54,6 +65,8 @@ public class Master : MonoBehaviour {
             camc = false;
             cam.transform.position = camPosOrig;
             cam.transform.rotation = camRotOrig;
+            
+            
             if(ButtonsPress.state == "Targetting")
             {
                 ButtonsPress.state = "0";
@@ -135,6 +148,7 @@ public class Master : MonoBehaviour {
             StateMachine.battleState = (int)StateMachine.battleStates.enemy;
             //else
             StateMachine.battleState = (int)StateMachine.battleStates.endStatus;
+            iterador = 0;
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.enemy)
         {
