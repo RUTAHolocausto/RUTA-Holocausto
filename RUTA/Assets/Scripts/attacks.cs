@@ -21,10 +21,10 @@ public class Attacks : MonoBehaviour {
         }
         else if (attackNumber == 2)
         {
-            attackName = "Meele";
+            attackName = "CO2";
             attackStrength = 30;
-            attackCost = jugador.GetComponent<Player>().apBase;
-            attrib = "M";
+            attackCost = 2;
+            attrib = "R";
             attackAnim = 0;
         }
         else if (attackNumber == 3)

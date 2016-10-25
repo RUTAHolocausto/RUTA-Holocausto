@@ -2,12 +2,12 @@
 using System.Collections;
 
 public class Enemy : MonoBehaviour {
-    static public int hp;
-    static public int ap;
-    static public int attack;
-    static public int defense;
-    static public int weight;
-    static public int rp;
+    public int hp;
+    public int ap;
+    public int attack;
+    public int defense;
+    public int weight;
+    public int rp;
     public int hpBase;
     public int apBase;
     public int attackBase;
@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour {
     public int rpBase;
     // Use this for initialization
     void Awake () {
+        Master.enemyNum++;
         hp = hpBase;
         ap = apBase;
         attack = attackBase;

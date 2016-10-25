@@ -8,7 +8,7 @@ public class Master : MonoBehaviour {
         targetMenuC, confirmMenuC, dropMenuC, endMenuC, failMenuC,
         cam, side1, side2, player, attackButt1, attackButt2,
         attackButt3, attackButt4, attackButt5;
-    static public int iterador = 0;
+    static public int iterador = 0, enemyNum = 0;
     static public int[] queue;
     bool camc;
     public GameObject[] target;
@@ -166,13 +166,11 @@ public class Master : MonoBehaviour {
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.execution)
         {
-            //ejecutar ataques
-            //comprobar si el enemigo tiene vida
-
-            attacks();
-            StateMachine.battleState = (int)StateMachine.battleStates.enemy;
-            //else
-            StateMachine.battleState = (int)StateMachine.battleStates.endStatus;
+            attackExe();
+            if (enemyNum == 0)
+                StateMachine.battleState = (int)StateMachine.battleStates.enemy;
+            else
+                StateMachine.battleState = (int)StateMachine.battleStates.endStatus;
             iterador = 0;
         }
         else if (StateMachine.battleState == (int)StateMachine.battleStates.enemy)
@@ -198,8 +196,9 @@ public class Master : MonoBehaviour {
     }
 
 
-    void attacks()
+    void attackExe()
     {
+        int j = 0;
         foreach (int i in queue)
         {
             switch (i)
@@ -221,6 +220,16 @@ public class Master : MonoBehaviour {
                     player.GetComponent<Animator>().SetInteger("State", player.GetComponent<Player>().part5.GetComponent<Attacks>().attackAnim);
                     break;
             }
+            if (target[j].GetComponent<Enemy>().hp <= 0)
+            {
+                Destroy(target[j]);
+                enemyNum--;
+            }
+            j++;
         }
+    }
+    void damageResolution(Attacks part)
+    {
+        //añadir formula de daño para ejecución.
     }
 }
